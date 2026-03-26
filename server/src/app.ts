@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
+import { registerModules } from "./module/modules";
 
 const BASE_URL = process.env.BASE_URL;
 
@@ -41,6 +42,8 @@ export const createApp = async () => {
     });
   });
 
+  const modules = await registerModules(app);
+
   // -------404 Handler-------------
   app.use((req: Request, res: Response) => {
     res.status(404).json({
@@ -49,5 +52,5 @@ export const createApp = async () => {
     });
   });
 
-  return app;
+  return { app, modules };
 };
