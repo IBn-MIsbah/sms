@@ -5,6 +5,9 @@ import rateLimit from "express-rate-limit";
 import { registerModules } from "./module/modules";
 
 const BASE_URL = process.env.BASE_URL;
+const isProduction =
+  process.env.NODE_ENV === "production" ||
+  process.env.NODE_ENV === "PRODUCTION";
 
 export const createApp = async () => {
   const app = express();
@@ -13,7 +16,7 @@ export const createApp = async () => {
   app.use(express.urlencoded({ extended: true }));
   app.use(
     cors({
-      origin: BASE_URL,
+      origin: isProduction ? BASE_URL : "http://localhost:5173",
       credentials: true,
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
       allowedHeaders: ["Content-Type", "Authorization"],
