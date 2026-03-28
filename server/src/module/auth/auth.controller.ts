@@ -60,16 +60,20 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   async login(req: Request, res: Response, next: NextFunction) {
+    req.logger.info("Proccessing login request");
     try {
       const validatedData = loginInputSchema.parse(req.body);
       const result = await this.authService.login(validatedData);
+
+      req.logger.info("Login successful", { userId: result.user.id });
 
       return res.json({
         success: true,
         data: result,
         message: "Login Successfully",
       });
-    } catch (error) {
+    } catch (error: any) {
+      req.logger.error("Login failed", { error: error.message });
       next(error);
     }
   }

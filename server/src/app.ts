@@ -3,6 +3,9 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
 import { registerModules } from "./module/modules";
+import { LoggerFactory } from "./shared/utils/logger";
+import { requestLoggerMiddleware } from "./shared/middleware/request-logger";
+import { errorHandler } from "./shared/middleware/error-handler";
 
 const BASE_URL = process.env.BASE_URL;
 const isProduction =
@@ -11,6 +14,11 @@ const isProduction =
 
 export const createApp = async () => {
   const app = express();
+  const logger = LoggerFactory.createModuleLogger("App");
+
+  logger.info("Creating Express application");
+
+  app.use(requestLoggerMiddleware());
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
@@ -38,6 +46,7 @@ export const createApp = async () => {
   app.use(cookieParser());
 
   app.get("/health", (req: Request, res: Response) => {
+    req.logger.info("Health check requested");
     res.status(200).json({
       success: true,
       message: "Health check passed",
@@ -49,11 +58,14 @@ export const createApp = async () => {
 
   // -------404 Handler-------------
   app.use((req: Request, res: Response) => {
+    req.logger.warn("Route not found", { url: req.originalUrl });
     res.status(404).json({
       success: false,
       message: `Route ${req.originalUrl} not found`,
     });
   });
+  app.use(errorHandler);
+  logger.info("Application configured successfully");
 
   return { app, modules };
 };
