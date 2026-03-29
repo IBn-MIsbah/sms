@@ -6,6 +6,8 @@ const isProduction = import.meta.env.PROD === true;
 const BASE_URL = import.meta.env.BASE_URL;
 const baseURL = isProduction ? BASE_URL : "http://localhost:4000";
 
+console.log(import.meta.env.PROD, import.meta.env.BASE_URL);
+
 export const api = axios.create({
   baseURL: baseURL,
   withCredentials: true,
