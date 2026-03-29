@@ -3,11 +3,8 @@ import axios from "axios";
 // import { postLogout, postRefresh } from "./auth-api";
 
 const isProduction = import.meta.env.PROD === true;
-const BASE_URL = import.meta.env.BASE_URL;
-const baseURL = isProduction ? BASE_URL : "http://localhost:4000";
 const envBaseUrl = import.meta.env.VITE_API_URL;
-console.log("BASE_URL: ", BASE_URL, envBaseUrl);
-console.log(import.meta.env.PROD, import.meta.env.BASE_URL);
+const baseURL = isProduction ? envBaseUrl : "http://localhost:4000";
 
 export const api = axios.create({
   baseURL: baseURL,
